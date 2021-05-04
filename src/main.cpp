@@ -43,7 +43,7 @@ bool loadObj(const std::string& filename, std::vector<float>& vertices,
 }
 
 int main() {
-  std::string filename = "dragon.obj";
+  std::string filename = "CornellBox-Original.obj";
 
   std::vector<float> vertices;
   std::vector<unsigned int> indices;
@@ -65,6 +65,16 @@ int main() {
   std::cout << "nodes: " << bvh.nNodes() << std::endl;
   std::cout << "internal nodes: " << bvh.nInternalNodes() << std::endl;
   std::cout << "leaf nodes: " << bvh.nLeafNodes() << std::endl;
+  std::cout << "bbox: " << bvh.rootAABB() << std::endl;
+
+  Ray ray(Vec3(0, 0, -10), Vec3(0, 0, 1));
+  IntersectInfo info;
+  if (bvh.intersect(ray, info)) {
+    std::cout << "t: " << info.t << std::endl;
+    std::cout << "hitPos: " << info.hitPos << std::endl;
+    std::cout << "barycentric[0]: " << info.barycentric[0] << std::endl;
+    std::cout << "barycentric[1]: " << info.barycentric[1] << std::endl;
+  }
 
   return 0;
 }
