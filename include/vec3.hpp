@@ -3,25 +3,25 @@
 
 #include <array>
 #include <cmath>
-#include <iostream
+#include <iostream>
 
 class Vec3 {
  private:
   std::array<float, 3> v;
 
  public:
-  constexpr Vec3() : v{0, 0, 0} {}
-  constexpr Vec3(float value) : v{value, value, value} {}
-  constexpr Vec3(float x, float y, float z) : v{x, y, z} {}
+  Vec3() : v{0, 0, 0} {}
+  Vec3(float value) : v{value, value, value} {}
+  Vec3(float x, float y, float z) : v{x, y, z} {}
 
-  constexpr float operator[](int i) const {
+  float operator[](int i) const {
 #ifndef NDEBUG
     return v.at(i);
 #else
     return v[i];
 #endif
   }
-  constexpr float& operator[](int i) {
+  float& operator[](int i) {
 #ifndef NDEBUG
     return v.at(i);
 #else
@@ -29,19 +29,19 @@ class Vec3 {
 #endif
   }
 
-  constexpr bool operator==(const Vec3& rhs) const {
+  bool operator==(const Vec3& rhs) const {
     return v[0] == rhs[0] && v[1] == rhs[1] && v[2] == rhs[2];
   }
 };
 
-inline constexpr Vec3 operator+(const Vec3& v1, const Vec3& v2) {
+inline Vec3 operator+(const Vec3& v1, const Vec3& v2) {
   Vec3 ret;
   for (int i = 0; i < 3; ++i) {
     ret[i] = v1[i] + v2[i];
   }
   return ret;
 }
-inline constexpr Vec3 operator-(const Vec3& v1, const Vec3& v2) {
+inline Vec3 operator-(const Vec3& v1, const Vec3& v2) {
   Vec3 ret;
   for (int i = 0; i < 3; ++i) {
     ret[i] = v1[i] - v2[i];
@@ -49,23 +49,23 @@ inline constexpr Vec3 operator-(const Vec3& v1, const Vec3& v2) {
   return ret;
 }
 
-inline constexpr Vec3 operator*(const Vec3& v, float k) {
+inline Vec3 operator*(const Vec3& v, float k) {
   Vec3 ret;
   for (int i = 0; i < 3; ++i) {
     ret[i] = v[i] * k;
   }
   return ret;
 }
-inline constexpr Vec3 operator*(float k, const Vec3& v) { return v * k; }
+inline Vec3 operator*(float k, const Vec3& v) { return v * k; }
 
-inline constexpr Vec3 operator/(const Vec3& v, float k) {
+inline Vec3 operator/(const Vec3& v, float k) {
   Vec3 ret;
   for (int i = 0; i < 3; ++i) {
     ret[i] = v[i] / k;
   }
   return ret;
 }
-inline constexpr Vec3 operator/(float k, const Vec3& v) {
+inline Vec3 operator/(float k, const Vec3& v) {
   Vec3 ret;
   for (int i = 0; i < 3; ++i) {
     ret[i] = k / v[i];
@@ -73,10 +73,10 @@ inline constexpr Vec3 operator/(float k, const Vec3& v) {
   return ret;
 }
 
-inline constexpr float length(const Vec3& v) {
+inline float length(const Vec3& v) {
   return std::sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
 }
-inline constexpr float length2(const Vec3& v) {
+inline float length2(const Vec3& v) {
   return v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
 }
 

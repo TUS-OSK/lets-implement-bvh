@@ -6,19 +6,19 @@
 #include <limits>
 
 #include "ray.hpp"
-#include "vec3.hpp
+#include "vec3.hpp"
 
 struct AABB {
   Vec3 bounds[2];
 
-  constexpr AABB()
+  AABB()
       : bounds{std::numeric_limits<float>::max(),
                std::numeric_limits<float>::min()} {}
-  constexpr AABB(const Vec3& pMin, const Vec3& pMax) : bounds{pMin, pMax} {}
+  AABB(const Vec3& pMin, const Vec3& pMax) : bounds{pMin, pMax} {}
 
-  constexpr Vec3 center() const { return 0.5f * (bounds[0] + bounds[1]); }
+  Vec3 center() const { return 0.5f * (bounds[0] + bounds[1]); }
 
-  constexpr int longestAxis() const {
+  int longestAxis() const {
     const Vec3 length = bounds[1] - bounds[0];
     // x
     if (length[0] >= length[1] && length[0] >= length[2]) {
@@ -34,11 +34,11 @@ struct AABB {
     }
   }
 
-  constexpr bool operator==(const AABB& rhs) const {
+  bool operator==(const AABB& rhs) const {
     return bounds[0] == rhs.bounds[0] && bounds[1] == rhs.bounds[1];
   }
 
-  constexpr bool intersect(const Ray& ray) const {
+  bool intersect(const Ray& ray) const {
     // https://dl.acm.org/doi/abs/10.1145/1198555.1198748
     float tmin, tmax, tymin, tymax, tzmin, tzmax;
 
@@ -60,7 +60,7 @@ struct AABB {
   }
 };
 
-inline constexpr AABB mergeAABB(const AABB& bbox, const Vec3& p) {
+inline AABB mergeAABB(const AABB& bbox, const Vec3& p) {
   AABB ret;
   for (int i = 0; i < 3; ++i) {
     ret.bounds[0][i] = std::min(bbox.bounds[0][i], p[i]);
@@ -69,7 +69,7 @@ inline constexpr AABB mergeAABB(const AABB& bbox, const Vec3& p) {
   return ret;
 }
 
-inline constexpr AABB mergeAABB(const AABB& bbox1, const AABB& bbox2) {
+inline AABB mergeAABB(const AABB& bbox1, const AABB& bbox2) {
   AABB ret;
   for (int i = 0; i < 3; ++i) {
     ret.bounds[0][i] = std::min(bbox1.bounds[0][i], bbox2.bounds[0][i]);
