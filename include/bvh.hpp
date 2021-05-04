@@ -14,6 +14,7 @@ class BVH {
     AABB bbox;             // バウンディングボックス
     int primitivesOffset;  // primitivesへのオフセット
     int nPrimitives;       // ノードに含まれるPrimitiveの数
+    int axis;              // 分割軸(traverseの最適化に使う)
     BVHNode* child[2];  // 子ノードへのポインタ, 両方nullptrだったら葉ノード
   };
 
@@ -26,6 +27,7 @@ class BVH {
   BVHNode* root;        // ルートノードへのポインタ
   BVHStatistics stats;  // BVHの統計情報
 
+  // 再帰的にBVHのノードを構築していく
   BVHNode* buildBVHNode(int primStart, int primEnd,
                         std::vector<int>& primIndices) {
     // ノードの作成
@@ -80,6 +82,7 @@ class BVH {
     node->bbox = bbox;
     node->primitivesOffset = primStart;
     node->nPrimitives = nPrims;
+    node->axis = splitAxis;
 
     // 左の子ノードで同様の計算
     node->child[0] = buildBVHNode(primStart, splitIdx, primIndices);
@@ -90,6 +93,20 @@ class BVH {
     return node;
   }
 
+  // 再帰的にBVHのtraverseを行う
+  bool intersectNode(const BVHNode* node, const Ray& ray,
+                     IntersectInfo& info) const {
+    // AABBとの交差判定
+    if (node->bbox.intersect(ray)) {
+      // 葉ノードの場合
+      if (!node->child[0] && !node->child[1]) {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
  public:
   BVH(const Polygon& polygon) {
     // PolygonからTriangleを抜き出して追加していく
@@ -98,6 +115,7 @@ class BVH {
     }
   }
 
+  // BVHを構築する
   void buildBVH() {
     // 各Primitiveのバウンディングボックスを事前計算
     for (const auto& prim : primitives) {
@@ -113,11 +131,17 @@ class BVH {
     stats.nNodes = stats.nInternalNodes + stats.nLeafNodes;
   }
 
+  // ノード数を返す
   int nNodes() const { return stats.nNodes; }
+  // 中間ノード数を返す
   int nInternalNodes() const { return stats.nInternalNodes; }
+  // 葉ノード数を返す
   int nLeafNodes() const { return stats.nLeafNodes; }
 
-  bool intersect(const Ray& ray, IntersectInfo& info) const { return false; }
+  // traverseをする
+  bool intersect(const Ray& ray, IntersectInfo& info) const {
+    return intersectNode(root, ray, info);
+  }
 };
 
 #endif
