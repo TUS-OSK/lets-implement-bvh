@@ -134,12 +134,10 @@ class BVH {
         const int primEnd = node->primIndicesOffset + node->nPrimitives;
         for (int i = node->primIndicesOffset; i < primEnd; ++i) {
           const int primIdx = primIndices[i];
-          IntersectInfo tempInfo;
-          if (primitives[primIdx].intersect(ray, tempInfo)) {
+          if (primitives[primIdx].intersect(ray, info)) {
             // intersectしたらrayのtmaxを更新
             hit = true;
-            ray.tmax = tempInfo.t;
-            info = tempInfo;
+            ray.tmax = info.t;
           }
         }
       } else {
