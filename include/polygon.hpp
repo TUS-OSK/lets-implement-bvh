@@ -7,9 +7,9 @@
 struct Polygon {
   unsigned int nVertices;  // 頂点数
   float* vertices;         // 頂点座標の配列
-  unsigned int* indices;   // 頂点配列
-  float* normals;
-  float* uvs;
+  unsigned int* indices;   // verticesへのインデックス配列
+  float* normals;          // 頂点ごとの法線の配列
+  float* uvs;              // 頂点ごとのUV座標の配列
   int* geomIDs;
 
   Polygon(unsigned int nVertices, float* vertices, unsigned int* indices,
@@ -22,6 +22,7 @@ struct Polygon {
         uvs(uvs),
         geomIDs(geomIDs) {}
 
+  // 指定した頂点座標の位置の頂点をVec3で取得する
   Vec3 getVertex(int vertexIdx) const {
     if (vertexIdx > nVertices) {
       std::cerr << "vertex index is out of range" << std::endl;
@@ -31,6 +32,7 @@ struct Polygon {
                 vertices[3 * vertexIdx + 2]);
   }
 
+  // 指定した面の頂点座標配列へのインデックスを取得する
   std::array<unsigned int, 3> getIndices(int faceIdx) const {
     if (faceIdx > nFaces()) {
       std::cerr << "face index is out of range" << std::endl;
@@ -40,6 +42,12 @@ struct Polygon {
             indices[3 * faceIdx + 2]};
   }
 
+  // 頂点ごとの法線が存在するか
+  bool hasNormals() const { return normals != nullptr; }
+  // 頂点ごとのUVが存在するか
+  bool hasUVs() const { return uvs != nullptr; }
+
+  // 面の数を返す
   unsigned int nFaces() const { return nVertices / 3; };
 };
 
