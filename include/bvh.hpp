@@ -169,6 +169,8 @@ class BVH {
   int nInternalNodes() const { return stats.nInternalNodes; }
   // 葉ノード数を返す
   int nLeafNodes() const { return stats.nLeafNodes; }
+  // 全体のバウンディングボックスを返す
+  AABB rootAABB() const { return root->bbox; }
 
   // traverseをする
   bool intersect(Ray& ray, IntersectInfo& info) const {
