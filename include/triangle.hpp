@@ -61,6 +61,33 @@ class Triangle {
     info.barycentric[0] = u;
     info.barycentric[1] = v;
 
+    // 法線の計算
+    const float w = 1.0f - u - v;
+    if (polygon->hasNormals()) {
+      // 補間した法線を計算
+      const Vec3 n1 = polygon->getNormal(indices[0]);
+      const Vec3 n2 = polygon->getNormal(indices[1]);
+      const Vec3 n3 = polygon->getNormal(indices[2]);
+      info.hitPos = w * n1 + u * n2 + v * n3;
+    } else {
+      // 面法線を計算
+      info.hitNormal = normalize(cross(e1, e2));
+    }
+
+    // UVの計算
+    if (polygon->hasUVs()) {
+      // 補間したUVを計算
+      const auto uv1 = polygon->getUV(indices[0]);
+      const auto uv2 = polygon->getUV(indices[1]);
+      const auto uv3 = polygon->getUV(indices[2]);
+      info.uv[0] = w * uv1.first + u * uv2.first + v * uv3.first;
+      info.uv[1] = w * uv1.second + u * uv2.second + v * uv3.second;
+    } else {
+      // barycentricをセット
+      info.uv[0] = u;
+      info.uv[1] = v;
+    }
+
     return true;
   }
 };
