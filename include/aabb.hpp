@@ -50,8 +50,8 @@ struct AABB {
     if (tymin > tmin) tmin = tymin;
     if (tymax < tmax) tmax = tymax;
 
-    tymin = (bounds[ray.dirInvSign[2]][2] - ray.origin[2]) * ray.dirInv[2];
-    tymax = (bounds[1 - ray.dirInvSign[2]][2] - ray.origin[2]) * ray.dirInv[2];
+    tzmin = (bounds[ray.dirInvSign[2]][2] - ray.origin[2]) * ray.dirInv[2];
+    tzmax = (bounds[1 - ray.dirInvSign[2]][2] - ray.origin[2]) * ray.dirInv[2];
     if (tmin > tzmax || tzmin > tmax) return false;
     if (tzmin > tmin) tmin = tzmin;
     if (tzmax < tmax) tmax = tzmax;
