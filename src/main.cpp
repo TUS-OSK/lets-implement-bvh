@@ -54,8 +54,9 @@ int main() {
     std::exit(EXIT_FAILURE);
   }
 
-  const auto polygon = std::make_shared<Polygon>(
-      indices.size(), vertices.data(), indices.data());
+  const auto polygon =
+      std::make_shared<Polygon>(indices.size(), vertices.data(), indices.data(),
+                                normals.data(), uvs.data());
 
   std::cout << "vertices: " << polygon->nVertices << std::endl;
   std::cout << "faces: " << polygon->nFaces() << std::endl;
@@ -72,8 +73,10 @@ int main() {
   if (bvh.intersect(ray, info)) {
     std::cout << "t: " << info.t << std::endl;
     std::cout << "hitPos: " << info.hitPos << std::endl;
-    std::cout << "barycentric[0]: " << info.barycentric[0] << std::endl;
-    std::cout << "barycentric[1]: " << info.barycentric[1] << std::endl;
+    std::cout << "hitNormal: " << info.hitNormal << std::endl;
+    std::cout << "uv: " << info.uv[0] << ", " << info.uv[1] << std::endl;
+    std::cout << "barycentric: " << info.barycentric[0] << ", "
+              << info.barycentric[1] << std::endl;
   }
 
   return 0;
