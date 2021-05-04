@@ -122,12 +122,12 @@ class BVH {
   }
 
   // 再帰的にBVHのtraverseを行う
-  bool intersectNode(const BVHNode* node, const Ray& ray,
-                     IntersectInfo& info) const {
+  bool intersectNode(const BVHNode* node, const Ray& ray, const Vec3& dirInv,
+                     const int dirInvSign[3], IntersectInfo& info) const {
     bool hit = false;
 
     // AABBとの交差判定
-    if (node->bbox.intersect(ray)) {
+    if (node->bbox.intersect(ray, dirInv, dirInvSign)) {
       if (node->child[0] == nullptr && node->child[1] == nullptr) {
         // 葉ノードの場合
         // ノードに含まれる全てのPrimitiveと交差計算
@@ -145,10 +145,10 @@ class BVH {
       } else {
         // 子ノードとの交差判定
         // rayの方向に応じて最適な順番で交差判定をする
-        hit |=
-            intersectNode(node->child[ray.dirInvSign[node->axis]], ray, info);
-        hit |= intersectNode(node->child[1 - ray.dirInvSign[node->axis]], ray,
-                             info);
+        hit |= intersectNode(node->child[dirInvSign[node->axis]], ray, dirInv,
+                             dirInvSign, info);
+        hit |= intersectNode(node->child[1 - dirInvSign[node->axis]], ray,
+                             dirInv, dirInvSign, info);
       }
     }
 
@@ -196,7 +196,13 @@ class BVH {
 
   // traverseをする
   bool intersect(const Ray& ray, IntersectInfo& info) const {
-    return intersectNode(root, ray, info);
+    // レイの方向の逆数と符号を事前計算しておく
+    const Vec3 dirInv = 1.0f / ray.direction;
+    int dirInvSign[3];
+    for (int i = 0; i < 3; ++i) {
+      dirInvSign[i] = dirInv[i] > 0 ? 0 : 1;
+    }
+    return intersectNode(root, ray, dirInv, dirInvSign, info);
   }
 };
 

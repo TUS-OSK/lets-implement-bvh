@@ -34,20 +34,21 @@ struct AABB {
     }
   }
 
-  bool intersect(const Ray& ray) const {
+  bool intersect(const Ray& ray, const Vec3& dirInv,
+                 const int dirInvSign[3]) const {
     // https://dl.acm.org/doi/abs/10.1145/1198555.1198748
     float tmin, tmax, tymin, tymax, tzmin, tzmax;
 
-    tmin = (bounds[ray.dirInvSign[0]][0] - ray.origin[0]) * ray.dirInv[0];
-    tmax = (bounds[1 - ray.dirInvSign[0]][0] - ray.origin[0]) * ray.dirInv[0];
-    tymin = (bounds[ray.dirInvSign[1]][1] - ray.origin[1]) * ray.dirInv[1];
-    tymax = (bounds[1 - ray.dirInvSign[1]][1] - ray.origin[1]) * ray.dirInv[1];
+    tmin = (bounds[dirInvSign[0]][0] - ray.origin[0]) * dirInv[0];
+    tmax = (bounds[1 - dirInvSign[0]][0] - ray.origin[0]) * dirInv[0];
+    tymin = (bounds[dirInvSign[1]][1] - ray.origin[1]) * dirInv[1];
+    tymax = (bounds[1 - dirInvSign[1]][1] - ray.origin[1]) * dirInv[1];
     if (tmin > tymax || tymin > tmax) return false;
     if (tymin > tmin) tmin = tymin;
     if (tymax < tmax) tmax = tymax;
 
-    tzmin = (bounds[ray.dirInvSign[2]][2] - ray.origin[2]) * ray.dirInv[2];
-    tzmax = (bounds[1 - ray.dirInvSign[2]][2] - ray.origin[2]) * ray.dirInv[2];
+    tzmin = (bounds[dirInvSign[2]][2] - ray.origin[2]) * dirInv[2];
+    tzmax = (bounds[1 - dirInvSign[2]][2] - ray.origin[2]) * dirInv[2];
     if (tmin > tzmax || tzmin > tmax) return false;
     if (tzmin > tmin) tmin = tzmin;
     if (tzmax < tmax) tmax = tzmax;
