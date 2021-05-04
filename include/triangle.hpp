@@ -54,6 +54,7 @@ class Triangle {
     if (v < 0.0f || u + v > 1.0f) return false;
 
     const float t = dot(e2, qvec) * invDet;
+    if (t < ray.tmin && t > ray.tmax) return false;
 
     info.t = t;
     info.hitPos = ray(t);
