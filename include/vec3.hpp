@@ -29,8 +29,43 @@ class Vec3 {
 #endif
   }
 
-  bool operator==(const Vec3& rhs) const {
-    return v[0] == rhs[0] && v[1] == rhs[1] && v[2] == rhs[2];
+  Vec3 operator-() const { return Vec3(-v[0], -v[1], -v[2]); }
+
+  Vec3& operator+=(const Vec3& v) {
+    this->v[0] += v[0];
+    this->v[1] += v[1];
+    this->v[2] += v[2];
+    return *this;
+  }
+  Vec3& operator-=(const Vec3& v) {
+    this->v[0] -= v[0];
+    this->v[1] -= v[1];
+    this->v[2] -= v[2];
+    return *this;
+  }
+  Vec3& operator*=(const Vec3& v) {
+    this->v[0] *= v[0];
+    this->v[1] *= v[1];
+    this->v[2] *= v[2];
+    return *this;
+  }
+  Vec3& operator*=(float k) {
+    this->v[0] *= k;
+    this->v[1] *= k;
+    this->v[2] *= k;
+    return *this;
+  }
+  Vec3& operator/=(const Vec3& v) {
+    this->v[0] /= v[0];
+    this->v[1] /= v[1];
+    this->v[2] /= v[2];
+    return *this;
+  }
+  Vec3& operator/=(float k) {
+    this->v[0] /= k;
+    this->v[1] /= k;
+    this->v[2] /= k;
+    return *this;
   }
 };
 
@@ -49,6 +84,13 @@ inline Vec3 operator-(const Vec3& v1, const Vec3& v2) {
   return ret;
 }
 
+inline Vec3 operator*(const Vec3& v1, const Vec3& v2) {
+  Vec3 ret;
+  for (int i = 0; i < 3; ++i) {
+    ret[i] = v1[i] * v2[i];
+  }
+  return ret;
+}
 inline Vec3 operator*(const Vec3& v, float k) {
   Vec3 ret;
   for (int i = 0; i < 3; ++i) {
@@ -58,6 +100,13 @@ inline Vec3 operator*(const Vec3& v, float k) {
 }
 inline Vec3 operator*(float k, const Vec3& v) { return v * k; }
 
+inline Vec3 operator/(const Vec3& v1, const Vec3& v2) {
+  Vec3 ret;
+  for (int i = 0; i < 3; ++i) {
+    ret[i] = v1[i] / v2[i];
+  }
+  return ret;
+}
 inline Vec3 operator/(const Vec3& v, float k) {
   Vec3 ret;
   for (int i = 0; i < 3; ++i) {
