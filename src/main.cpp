@@ -43,7 +43,7 @@ bool loadObj(const std::string& filename, std::vector<float>& vertices,
 }
 
 int main() {
-  std::string filename = "CornellBox-Original.obj";
+  std::string filename = "dragon.obj";
 
   std::vector<float> vertices;
   std::vector<unsigned int> indices;
