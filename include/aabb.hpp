@@ -12,8 +12,8 @@ struct AABB {
   Vec3 bounds[2];
 
   AABB()
-      : bounds{std::numeric_limits<float>::max(),
-               std::numeric_limits<float>::min()} {}
+      : bounds{Vec3(std::numeric_limits<float>::max()),
+               Vec3(std::numeric_limits<float>::min())} {}
   AABB(const Vec3& pMin, const Vec3& pMax) : bounds{pMin, pMax} {}
 
   Vec3 center() const { return 0.5f * (bounds[0] + bounds[1]); }
@@ -32,10 +32,6 @@ struct AABB {
     else {
       return 2;
     }
-  }
-
-  bool operator==(const AABB& rhs) const {
-    return bounds[0] == rhs.bounds[0] && bounds[1] == rhs.bounds[1];
   }
 
   bool intersect(const Ray& ray) const {
