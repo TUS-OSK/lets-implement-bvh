@@ -42,7 +42,7 @@ class BVH {
     }
 
     const int nPrims = primEnd - primStart;
-    if (nPrims < 4) {
+    if (nPrims <= 4) {
       // 葉ノードの作成
       node->bbox = bbox;
       node->primitivesOffset = primStart;
@@ -53,11 +53,19 @@ class BVH {
       return node;
     }
 
+    // 分割用に各Primitiveの中心点を含むAABBを計算
+    // NOTE: bboxをそのまま使ってしまうとsplitが失敗することが多い
+    AABB splitAABB;
+    for (int i = primStart; i < primEnd; ++i) {
+      const int primIdx = primIndices[i];
+      splitAABB = mergeAABB(splitAABB, bboxes[primIdx].center());
+    }
+
     // 分割軸
-    const int splitAxis = bbox.longestAxis();
+    const int splitAxis = splitAABB.longestAxis();
 
     // 分割点
-    const float splitPos = bbox.center()[splitAxis];
+    const float splitPos = splitAABB.center()[splitAxis];
 
     // AABBの分割
     const int splitIdx =
@@ -107,7 +115,7 @@ class BVH {
 
     // AABBとの交差判定
     if (node->bbox.intersect(ray)) {
-      if (!node->child[0] && !node->child[1]) {
+      if (node->child[0] == nullptr && node->child[1] == nullptr) {
         // 葉ノードの場合
         // ノードに含まれる全てのPrimitiveと交差計算
         const int primEnd = node->primitivesOffset + node->nPrimitives;
