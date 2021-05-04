@@ -8,9 +8,11 @@
 class BVH {
  private:
   std::vector<Triangle> primitives;  // Primitive(三角形)の配列
-  std::vector<AABB> bboxes;  // Primitiveのバウンディングボックスの配列
-  std::vector<int> primIndices;  // primitivesへのインデックスの配列
+  std::vector<AABB> bboxes;  // 各Primitiveのバウンディングボックスの配列
+  std::vector<int> primIndices;  // primitivesへのインデックスの配列.
+                                 // 分割時にはこれがソートされる
 
+  // ノードを表す構造体
   struct BVHNode {
     AABB bbox;             // バウンディングボックス
     int primitivesOffset;  // primIndicesへのオフセット
@@ -19,6 +21,7 @@ class BVH {
     BVHNode* child[2];  // 子ノードへのポインタ, 両方nullptrだったら葉ノード
   };
 
+  // BVHの統計情報を表す構造体
   struct BVHStatistics {
     int nNodes{0};          // ノード総数
     int nInternalNodes{0};  // 中間ノードの数
@@ -110,7 +113,8 @@ class BVH {
   }
 
   // 再帰的にBVHのtraverseを行う
-  bool intersectNode(const BVHNode* node, Ray& ray, IntersectInfo& info) const {
+  bool intersectNode(const BVHNode* node, const Ray& ray,
+                     IntersectInfo& info) const {
     bool hit = false;
 
     // AABBとの交差判定
@@ -182,7 +186,7 @@ class BVH {
   AABB rootAABB() const { return root->bbox; }
 
   // traverseをする
-  bool intersect(Ray& ray, IntersectInfo& info) const {
+  bool intersect(const Ray& ray, IntersectInfo& info) const {
     return intersectNode(root, ray, info);
   }
 };
