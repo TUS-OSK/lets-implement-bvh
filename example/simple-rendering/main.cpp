@@ -45,10 +45,10 @@ bool loadObj(const std::string& filename, std::vector<float>& vertices,
 }
 
 int main() {
-  const std::string filename = "CornellBox-Original.obj";
+  const std::string filename = "bunny.obj";
   const int width = 512;
   const int height = 512;
-  const Vec3 camPos(0, 0, 3);
+  const Vec3 camPos(0, 1, 2);
   const Vec3 camForward(0, 0, -1);
 
   std::vector<float> vertices;
@@ -63,9 +63,15 @@ int main() {
   const auto polygon =
       std::make_shared<Polygon>(indices.size(), vertices.data(), indices.data(),
                                 normals.data(), uvs.data());
+  std::cout << "vertices: " << polygon->nVertices << std::endl;
+  std::cout << "faces: " << polygon->nFaces() << std::endl;
 
   BVH bvh(*polygon);
   bvh.buildBVH();
+  std::cout << "nodes: " << bvh.nNodes() << std::endl;
+  std::cout << "internal nodes: " << bvh.nInternalNodes() << std::endl;
+  std::cout << "leaf nodes: " << bvh.nLeafNodes() << std::endl;
+  std::cout << "bbox: " << bvh.rootAABB() << std::endl;
 
   Image img(width, height);
   Camera camera(camPos, camForward);
