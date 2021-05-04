@@ -103,6 +103,8 @@ class BVH {
 
   // 再帰的にBVHのtraverseを行う
   bool intersectNode(const BVHNode* node, Ray& ray, IntersectInfo& info) const {
+    bool hit = false;
+
     // AABBとの交差判定
     if (node->bbox.intersect(ray)) {
       // 葉ノードの場合
@@ -114,21 +116,21 @@ class BVH {
           IntersectInfo tempInfo;
           if (primitives[primIdx].intersect(ray, tempInfo)) {
             // intersectしたらrayのtmaxを更新
+            hit = true;
             ray.tmax = tempInfo.t;
             info = tempInfo;
           }
         }
-        return true;
       }
     } else {
       // 子ノードとの交差判定
       // rayの方向に応じて最適な順番で交差判定をする
-      bool hit = false;
       hit |= intersectNode(node->child[ray.dirInvSign[node->axis]], ray, info);
       hit |=
           intersectNode(node->child[1 - ray.dirInvSign[node->axis]], ray, info);
-      return hit;
     }
+
+    return hit;
   }
 
  public:
