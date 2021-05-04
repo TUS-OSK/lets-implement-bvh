@@ -80,6 +80,15 @@ inline float length2(const Vec3& v) {
   return v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
 }
 
+inline float dot(const Vec3& v1, const Vec3& v2) {
+  return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
+}
+
+inline Vec3 cross(const Vec3& v1, const Vec3& v2) {
+  return Vec3(v1[1] * v2[2] - v1[2] * v2[1], v1[2] * v2[0] - v1[0] * v2[2],
+              v1[0] * v2[1] - v1[1] * v2[0]);
+}
+
 inline std::ostream& operator<<(std::ostream& stream, const Vec3& v) {
   stream << "(" << v[0] << ", " << v[1] << ", " << v[2] << ")";
   return stream;
