@@ -89,6 +89,8 @@ inline Vec3 cross(const Vec3& v1, const Vec3& v2) {
               v1[0] * v2[1] - v1[1] * v2[0]);
 }
 
+inline Vec3 normalize(const Vec3& v) { return v / length(v); }
+
 inline std::ostream& operator<<(std::ostream& stream, const Vec3& v) {
   stream << "(" << v[0] << ", " << v[1] << ", " << v[2] << ")";
   return stream;
