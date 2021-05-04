@@ -2,11 +2,8 @@
 #include <memory>
 #include <string>
 
-#include "aabb.hpp"
 #include "bvh.hpp"
-#include "polygon.hpp"
 #include "tiny_obj_loader.h"
-#include "vec3.hpp"
 
 bool loadObj(const std::string& filename, std::vector<float>& vertices,
              std::vector<unsigned int>& indices, std::vector<float>& normals,
@@ -62,6 +59,12 @@ int main() {
 
   std::cout << "vertices: " << polygon->nVertices << std::endl;
   std::cout << "faces: " << polygon->nFaces() << std::endl;
+
+  BVH bvh(*polygon);
+  bvh.buildBVH();
+  std::cout << "nodes: " << bvh.nNodes() << std::endl;
+  std::cout << "internal nodes: " << bvh.nInternalNodes() << std::endl;
+  std::cout << "leaf nodes: " << bvh.nLeafNodes() << std::endl;
 
   return 0;
 }
