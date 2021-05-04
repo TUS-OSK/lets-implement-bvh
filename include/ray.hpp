@@ -9,7 +9,7 @@ struct Ray {
   Vec3 direction;
   Vec3 dirInv;
   int dirInvSign[3];
-  mutable float tmin{0};
+  mutable float tmin{1e-3f};
   mutable float tmax{std::numeric_limits<float>::max()};
 
   explicit Ray(const Vec3& origin, const Vec3& direction)
