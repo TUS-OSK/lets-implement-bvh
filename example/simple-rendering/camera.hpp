@@ -23,7 +23,9 @@ class Camera {
   }
 
   Ray sampleRay(float u, float v) const {
-    return Ray(camPos, normalize(camForward + u * camRight + v * camUp));
+    const Vec3 pinholePos = camPos + camForward;
+    const Vec3 sensorPos = camPos + u * camRight + v * camUp;
+    return Ray(camPos, normalize(pinholePos - sensorPos));
   }
 };
 
