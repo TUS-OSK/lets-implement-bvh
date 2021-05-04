@@ -10,9 +10,9 @@ class Vec3 {
   std::array<float, 3> v;
 
  public:
-  Vec3() : v{0, 0, 0} {}
-  Vec3(float value) : v{value, value, value} {}
-  Vec3(float x, float y, float z) : v{x, y, z} {}
+  explicit Vec3() : v{0, 0, 0} {}
+  explicit Vec3(float value) : v{value, value, value} {}
+  explicit Vec3(float x, float y, float z) : v{x, y, z} {}
 
   float operator[](int i) const {
 #ifndef NDEBUG

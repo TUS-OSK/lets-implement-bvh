@@ -11,10 +11,10 @@
 struct AABB {
   Vec3 bounds[2];
 
-  AABB()
+  explicit AABB()
       : bounds{Vec3(std::numeric_limits<float>::max()),
                Vec3(std::numeric_limits<float>::min())} {}
-  AABB(const Vec3& pMin, const Vec3& pMax) : bounds{pMin, pMax} {}
+  explicit AABB(const Vec3& pMin, const Vec3& pMax) : bounds{pMin, pMax} {}
 
   Vec3 center() const { return 0.5f * (bounds[0] + bounds[1]); }
 

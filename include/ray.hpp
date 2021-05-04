@@ -12,7 +12,7 @@ struct Ray {
   mutable float tmin{0};
   mutable float tmax{std::numeric_limits<float>::max()};
 
-  Ray(const Vec3& origin, const Vec3& direction)
+  explicit Ray(const Vec3& origin, const Vec3& direction)
       : origin(origin), direction(direction), dirInv(1.0f / direction) {
     for (int i = 0; i < 3; ++i) {
       dirInvSign[i] = dirInv[i] > 0 ? 0 : 1;
