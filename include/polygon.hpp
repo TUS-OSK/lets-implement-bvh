@@ -32,6 +32,16 @@ struct Polygon {
                 vertices[3 * vertexIdx + 2]);
   }
 
+  // 指定した頂点座標の位置の法線をVec3で取得する
+  Vec3 getNormal(int vertexIdx) const {
+    if (vertexIdx > nVertices) {
+      std::cerr << "vertex index is out of range" << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    return Vec3(normals[3 * vertexIdx], normals[3 * vertexIdx + 1],
+                normals[3 * vertexIdx + 2]);
+  }
+
   // 指定した面の頂点座標配列へのインデックスを取得する
   std::array<unsigned int, 3> getIndices(int faceIdx) const {
     if (faceIdx > nFaces()) {
