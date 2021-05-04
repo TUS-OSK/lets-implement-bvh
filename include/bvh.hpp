@@ -14,10 +14,10 @@ class BVH {
 
   // ノードを表す構造体
   struct BVHNode {
-    AABB bbox;             // バウンディングボックス
-    int primitivesOffset;  // primIndicesへのオフセット
-    int nPrimitives;       // ノードに含まれるPrimitiveの数
-    int axis;              // 分割軸(traverseの最適化に使う)
+    AABB bbox;              // バウンディングボックス
+    int primIndicesOffset;  // primIndicesへのオフセット
+    int nPrimitives;        // ノードに含まれるPrimitiveの数
+    int axis;               // 分割軸(traverseの最適化に使う)
     BVHNode* child[2];  // 子ノードへのポインタ, 両方nullptrだったら葉ノード
   };
 
@@ -48,7 +48,7 @@ class BVH {
     if (nPrims <= 4) {
       // 葉ノードの作成
       node->bbox = bbox;
-      node->primitivesOffset = primStart;
+      node->primIndicesOffset = primStart;
       node->nPrimitives = nPrims;
       node->child[0] = nullptr;
       node->child[1] = nullptr;
@@ -82,7 +82,7 @@ class BVH {
     // 分割が失敗した場合は葉ノードを作成
     if (splitIdx == primStart || splitIdx == primEnd) {
       node->bbox = bbox;
-      node->primitivesOffset = primStart;
+      node->primIndicesOffset = primStart;
       node->nPrimitives = nPrims;
       node->child[0] = nullptr;
       node->child[1] = nullptr;
@@ -92,7 +92,7 @@ class BVH {
 
     // 中間ノードに情報をセット
     node->bbox = bbox;
-    node->primitivesOffset = primStart;
+    node->primIndicesOffset = primStart;
     node->nPrimitives = nPrims;
     node->axis = splitAxis;
 
@@ -122,8 +122,8 @@ class BVH {
       if (node->child[0] == nullptr && node->child[1] == nullptr) {
         // 葉ノードの場合
         // ノードに含まれる全てのPrimitiveと交差計算
-        const int primEnd = node->primitivesOffset + node->nPrimitives;
-        for (int i = node->primitivesOffset; i < primEnd; ++i) {
+        const int primEnd = node->primIndicesOffset + node->nPrimitives;
+        for (int i = node->primIndicesOffset; i < primEnd; ++i) {
           const int primIdx = primIndices[i];
           IntersectInfo tempInfo;
           if (primitives[primIdx].intersect(ray, tempInfo)) {
