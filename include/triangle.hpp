@@ -49,7 +49,7 @@ class Triangle {
     const float u = dot(tvec, pvec) * invDet;
     if (u < 0.0f || u > 1.0f) return false;
 
-    const Vec3 qvec = tvec - v1;
+    const Vec3 qvec = cross(tvec, e1);
     const float v = dot(ray.direction, qvec) * invDet;
     if (v < 0.0f || u + v > 1.0f) return false;
 
