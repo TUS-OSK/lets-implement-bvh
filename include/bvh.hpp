@@ -102,8 +102,7 @@ class BVH {
   }
 
   // 再帰的にBVHのtraverseを行う
-  bool intersectNode(const BVHNode* node, const Ray& ray,
-                     IntersectInfo& info) const {
+  bool intersectNode(const BVHNode* node, Ray& ray, IntersectInfo& info) const {
     // AABBとの交差判定
     if (node->bbox.intersect(ray)) {
       // 葉ノードの場合
@@ -112,8 +111,14 @@ class BVH {
         const int primEnd = node->primitivesOffset + node->nPrimitives;
         for (int i = node->primitivesOffset; i < primEnd; ++i) {
           const int primIdx = primIndices[i];
+          IntersectInfo tempInfo;
+          if (primitives[primIdx].intersect(ray, tempInfo)) {
+            // intersectしたらrayのtmaxを更新
+            ray.tmax = tempInfo.t;
+            info = tempInfo;
+          }
         }
-        return false;
+        return true;
       }
     } else {
       // 子ノードとの交差判定
@@ -164,7 +169,7 @@ class BVH {
   int nLeafNodes() const { return stats.nLeafNodes; }
 
   // traverseをする
-  bool intersect(const Ray& ray, IntersectInfo& info) const {
+  bool intersect(Ray& ray, IntersectInfo& info) const {
     return intersectNode(root, ray, info);
   }
 };
