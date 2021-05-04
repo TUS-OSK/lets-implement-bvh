@@ -9,10 +9,11 @@ class BVH {
  private:
   std::vector<Triangle> primitives;  // Primitive(三角形)の配列
   std::vector<AABB> bboxes;  // Primitiveのバウンディングボックスの配列
+  std::vector<int> primIndices;  // primitivesへのインデックスの配列
 
   struct BVHNode {
     AABB bbox;             // バウンディングボックス
-    int primitivesOffset;  // primitivesへのオフセット
+    int primitivesOffset;  // primIndicesへのオフセット
     int nPrimitives;       // ノードに含まれるPrimitiveの数
     int axis;              // 分割軸(traverseの最適化に使う)
     BVHNode* child[2];  // 子ノードへのポインタ, 両方nullptrだったら葉ノード
@@ -93,6 +94,13 @@ class BVH {
     return node;
   }
 
+  // 再帰的にBVHNodeを消去していく
+  void deleteBVHNode(BVHNode* node) {
+    if (node->child[0]) deleteBVHNode(node->child[0]);
+    if (node->child[1]) deleteBVHNode(node->child[1]);
+    delete node;
+  }
+
   // 再帰的にBVHのtraverseを行う
   bool intersectNode(const BVHNode* node, const Ray& ray,
                      IntersectInfo& info) const {
@@ -100,10 +108,21 @@ class BVH {
     if (node->bbox.intersect(ray)) {
       // 葉ノードの場合
       if (!node->child[0] && !node->child[1]) {
+        // ノードに含まれる全てのPrimitiveと交差計算
+        const int primEnd = node->primitivesOffset + node->nPrimitives;
+        for (int i = node->primitivesOffset; i < primEnd; ++i) {
+          const int primIdx = primIndices[i];
+        }
         return false;
       }
     } else {
-      return false;
+      // 子ノードとの交差判定
+      // rayの方向に応じて最適な順番で交差判定をする
+      bool hit = false;
+      hit |= intersectNode(node->child[ray.dirInvSign[node->axis]], ray, info);
+      hit |=
+          intersectNode(node->child[1 - ray.dirInvSign[node->axis]], ray, info);
+      return hit;
     }
   }
 
@@ -115,6 +134,12 @@ class BVH {
     }
   }
 
+  ~BVH() {
+    if (root) {
+      deleteBVHNode(root);
+    }
+  }
+
   // BVHを構築する
   void buildBVH() {
     // 各Primitiveのバウンディングボックスを事前計算
@@ -123,7 +148,7 @@ class BVH {
     }
 
     // 各Primitiveへのインデックスを表す配列を作成
-    std::vector<int> primIndices(primitives.size());
+    primIndices.resize(primitives.size());
     std::iota(primIndices.begin(), primIndices.end(), 0);
 
     // BVHの構築をルートノードから開始
