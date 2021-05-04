@@ -3,6 +3,7 @@
 #include <string>
 
 #include "aabb.hpp"
+#include "bvh.hpp"
 #include "polygon.hpp"
 #include "tiny_obj_loader.h"
 #include "vec3.hpp"
