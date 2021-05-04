@@ -107,8 +107,8 @@ class BVH {
 
     // AABBとの交差判定
     if (node->bbox.intersect(ray)) {
-      // 葉ノードの場合
       if (!node->child[0] && !node->child[1]) {
+        // 葉ノードの場合
         // ノードに含まれる全てのPrimitiveと交差計算
         const int primEnd = node->primitivesOffset + node->nPrimitives;
         for (int i = node->primitivesOffset; i < primEnd; ++i) {
@@ -121,13 +121,14 @@ class BVH {
             info = tempInfo;
           }
         }
+      } else {
+        // 子ノードとの交差判定
+        // rayの方向に応じて最適な順番で交差判定をする
+        hit |=
+            intersectNode(node->child[ray.dirInvSign[node->axis]], ray, info);
+        hit |= intersectNode(node->child[1 - ray.dirInvSign[node->axis]], ray,
+                             info);
       }
-    } else {
-      // 子ノードとの交差判定
-      // rayの方向に応じて最適な順番で交差判定をする
-      hit |= intersectNode(node->child[ray.dirInvSign[node->axis]], ray, info);
-      hit |=
-          intersectNode(node->child[1 - ray.dirInvSign[node->axis]], ray, info);
     }
 
     return hit;
