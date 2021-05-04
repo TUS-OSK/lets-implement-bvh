@@ -71,16 +71,25 @@ class BVH {
     const float splitPos = splitAABB.center()[splitAxis];
 
     // AABBの分割
-    const int splitIdx =
-        std::partition(primIndices.begin() + primStart,
-                       primIndices.begin() + primEnd,
-                       [&](int idx) {
-                         return bboxes[idx].center()[splitAxis] < splitPos;
-                       }) -
-        primIndices.begin();
+    const int splitIdx = primStart + nPrims / 2;
+    std::nth_element(primIndices.begin() + primStart,
+                     primIndices.begin() + splitIdx,
+                     primIndices.begin() + primEnd, [&](int idx1, int idx2) {
+                       return bboxes[idx1].center()[splitAxis] <
+                              bboxes[idx2].center()[splitAxis];
+                     });
 
     // 分割が失敗した場合は葉ノードを作成
     if (splitIdx == primStart || splitIdx == primEnd) {
+      std::cout << "splitting failed" << std::endl;
+      std::cout << "nPrimitives: " << nPrims << std::endl;
+      std::cout << "splitAxis: " << splitAxis << std::endl;
+      std::cout << "splitPos: " << splitPos << std::endl;
+      std::cout << "primStart: " << primStart << std::endl;
+      std::cout << "splitIdx: " << splitIdx << std::endl;
+      std::cout << "primEnd: " << primEnd << std::endl;
+      std::cout << std::endl;
+
       node->bbox = bbox;
       node->primIndicesOffset = primStart;
       node->nPrimitives = nPrims;
