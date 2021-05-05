@@ -1,5 +1,6 @@
 #ifndef _POLYGON_H
 #define _POLYGON_H
+#include <cassert>
 #include <iostream>
 
 #include "vec3.hpp"
@@ -24,40 +25,28 @@ struct Polygon {
 
   // 指定した頂点座標の位置の頂点座標をVec3で取得する
   Vec3 getVertex(unsigned int vertexIdx) const {
-    if (vertexIdx > nVertices) {
-      std::cerr << "vertex index is out of range" << std::endl;
-      std::exit(EXIT_FAILURE);
-    }
+    assert(vertexIdx <= nVertices);
     return Vec3(vertices[3 * vertexIdx], vertices[3 * vertexIdx + 1],
                 vertices[3 * vertexIdx + 2]);
   }
 
   // 指定した面の頂点座標配列へのインデックスを取得する
   std::array<unsigned int, 3> getIndices(unsigned int faceIdx) const {
-    if (faceIdx > nFaces()) {
-      std::cerr << "face index is out of range" << std::endl;
-      std::exit(EXIT_FAILURE);
-    }
+    assert(faceIdx <= nFaces());
     return {indices[3 * faceIdx + 0], indices[3 * faceIdx + 1],
             indices[3 * faceIdx + 2]};
   }
 
   // 指定した頂点座標の位置の法線をVec3で取得する
   Vec3 getNormal(unsigned int vertexIdx) const {
-    if (vertexIdx > nVertices) {
-      std::cerr << "vertex index is out of range" << std::endl;
-      std::exit(EXIT_FAILURE);
-    }
+    assert(vertexIdx <= nVertices);
     return Vec3(normals[3 * vertexIdx], normals[3 * vertexIdx + 1],
                 normals[3 * vertexIdx + 2]);
   }
 
   // 指定した頂点座標の位置のUV座標を取得する
   std::pair<float, float> getUV(unsigned int vertexIdx) const {
-    if (vertexIdx > nVertices) {
-      std::cerr << "vertex index is out of range" << std::endl;
-      std::exit(EXIT_FAILURE);
-    }
+    assert(vertexIdx <= nVertices);
     return {uvs[2 * vertexIdx], uvs[2 * vertexIdx + 1]};
   }
 
