@@ -23,7 +23,6 @@ bool loadObj(const std::string& filename, std::vector<float>& vertices,
 
   const auto& attrib = reader.GetAttrib();
   const auto& shapes = reader.GetShapes();
-  const auto& materials = reader.GetMaterials();
 
   vertices = attrib.vertices;
   if (attrib.normals.size() == attrib.vertices.size()) {

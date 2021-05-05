@@ -23,7 +23,7 @@ struct Polygon {
         geomIDs(geomIDs) {}
 
   // 指定した頂点座標の位置の頂点座標をVec3で取得する
-  Vec3 getVertex(int vertexIdx) const {
+  Vec3 getVertex(unsigned int vertexIdx) const {
     if (vertexIdx > nVertices) {
       std::cerr << "vertex index is out of range" << std::endl;
       std::exit(EXIT_FAILURE);
@@ -33,7 +33,7 @@ struct Polygon {
   }
 
   // 指定した面の頂点座標配列へのインデックスを取得する
-  std::array<unsigned int, 3> getIndices(int faceIdx) const {
+  std::array<unsigned int, 3> getIndices(unsigned int faceIdx) const {
     if (faceIdx > nFaces()) {
       std::cerr << "face index is out of range" << std::endl;
       std::exit(EXIT_FAILURE);
@@ -43,7 +43,7 @@ struct Polygon {
   }
 
   // 指定した頂点座標の位置の法線をVec3で取得する
-  Vec3 getNormal(int vertexIdx) const {
+  Vec3 getNormal(unsigned int vertexIdx) const {
     if (vertexIdx > nVertices) {
       std::cerr << "vertex index is out of range" << std::endl;
       std::exit(EXIT_FAILURE);
@@ -53,7 +53,7 @@ struct Polygon {
   }
 
   // 指定した頂点座標の位置のUV座標を取得する
-  std::pair<float, float> getUV(int vertexIdx) const {
+  std::pair<float, float> getUV(unsigned int vertexIdx) const {
     if (vertexIdx > nVertices) {
       std::cerr << "vertex index is out of range" << std::endl;
       std::exit(EXIT_FAILURE);

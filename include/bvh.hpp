@@ -156,7 +156,7 @@ class BVH {
  public:
   BVH(const Polygon& polygon) {
     // PolygonからTriangleを抜き出して追加していく
-    for (int f = 0; f < polygon.nFaces(); ++f) {
+    for (unsigned int f = 0; f < polygon.nFaces(); ++f) {
       primitives.emplace_back(&polygon, f);
     }
   }
