@@ -2,6 +2,7 @@
 #define _VEC3_H
 
 #include <array>
+#include <cassert>
 #include <cmath>
 #include <iostream>
 
@@ -14,19 +15,13 @@ class Vec3 {
   explicit Vec3(float value) : v{value, value, value} {}
   explicit Vec3(float x, float y, float z) : v{x, y, z} {}
 
-  float operator[](int i) const {
-#ifndef NDEBUG
-    return v.at(i);
-#else
+  float operator[](unsigned int i) const {
+    assert(i < 3);
     return v[i];
-#endif
   }
-  float& operator[](int i) {
-#ifndef NDEBUG
-    return v.at(i);
-#else
+  float& operator[](unsigned int i) {
+    assert(i < 3);
     return v[i];
-#endif
   }
 
   Vec3 operator-() const { return Vec3(-v[0], -v[1], -v[2]); }
