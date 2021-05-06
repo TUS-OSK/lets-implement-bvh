@@ -42,13 +42,14 @@ Vec3 sampleCosineHemisphere(float u, float v, float& pdf) {
 
 Vec3 pathTracing(const Ray& ray_in, const BVH& scene, RNG& rng) {
   constexpr int maxDepth = 100;
-  constexpr float russianRouletteProb = 0.99f;
   const Vec3 rho{0.9f, 0.9f, 0.9f};
 
   Vec3 radiance{0, 0, 0};
   Vec3 throughput{1, 1, 1};
   Ray ray = ray_in;
   for (int i = 0; i < maxDepth; ++i) {
+    const float russianRouletteProb =
+        std::max(std::max(throughput[0], throughput[1]), throughput[2]);
     if (rng.getNext() > russianRouletteProb) {
       break;
     }
@@ -119,12 +120,12 @@ bool loadObj(const std::string& filename, std::vector<float>& vertices,
 }
 
 int main() {
-  const std::string filename = "CornellBox-Original.obj";
+  const std::string filename = "sponza.obj";
   const int width = 512;
   const int height = 512;
   const int samples = 100;
-  const Vec3 camPos(0, 1, 3);
-  const Vec3 camForward(0, 0, -1);
+  const Vec3 camPos(-10, 7, 0);
+  const Vec3 camForward(1, 0, 0);
 
   std::vector<float> vertices;
   std::vector<unsigned int> indices;
