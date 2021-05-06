@@ -1,14 +1,13 @@
 #ifndef _VEC3_H
 #define _VEC3_H
 
-#include <array>
 #include <cassert>
 #include <cmath>
 #include <iostream>
 
 class Vec3 {
  private:
-  std::array<float, 3> v;
+  float v[3];
 
  public:
   explicit Vec3() : v{0, 0, 0} {}
