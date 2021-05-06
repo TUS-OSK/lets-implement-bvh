@@ -1,8 +1,8 @@
 #ifndef _TRIANGLE_H
 #define _TRIANGLE_H
-#include "aabb.hpp"
-#include "intersect-info.hpp"
-#include "polygon.hpp"
+#include "core/aabb.hpp"
+#include "core/intersect-info.hpp"
+#include "core/polygon.hpp"
 
 class Triangle {
  private:

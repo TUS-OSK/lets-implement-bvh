@@ -60,7 +60,7 @@ int main() {
   std::cout << "vertices: " << polygon->nVertices << std::endl;
   std::cout << "faces: " << polygon->nFaces() << std::endl;
 
-  BVH bvh(*polygon);
+  OptimizedBVH bvh(*polygon);
   bvh.buildBVH();
   std::cout << "nodes: " << bvh.nNodes() << std::endl;
   std::cout << "internal nodes: " << bvh.nInternalNodes() << std::endl;

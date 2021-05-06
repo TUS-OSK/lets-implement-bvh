@@ -1,7 +1,7 @@
 #ifndef _CAMERA_H
 #define _CAMERA_H
-#include "ray.hpp"
-#include "vec3.hpp"
+#include "core/ray.hpp"
+#include "core/vec3.hpp"
 
 class Camera {
  private:

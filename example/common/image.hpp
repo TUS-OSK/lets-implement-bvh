@@ -4,7 +4,7 @@
 #include <iostream>
 #include <string>
 
-#include "vec3.hpp"
+#include "core/vec3.hpp"
 
 class Image {
  private:
