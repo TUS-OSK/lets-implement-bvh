@@ -30,6 +30,18 @@ class BVH {
   BVHNode* root;        // ルートノードへのポインタ
   BVHStatistics stats;  // BVHの統計情報
 
+  // 葉ノードの作成
+  BVHNode* createLeafNode(BVHNode* node, const AABB& bbox,
+                          int primIndicesOffset, int nPrimitives) {
+    node->bbox = bbox;
+    node->primIndicesOffset = primIndicesOffset;
+    node->nPrimitives = nPrimitives;
+    node->child[0] = nullptr;
+    node->child[1] = nullptr;
+    stats.nLeafNodes++;
+    return node;
+  }
+
   // 再帰的にBVHのノードを構築していく
   BVHNode* buildBVHNode(int primStart, int primEnd,
                         const std::vector<AABB>& bboxes,
@@ -47,13 +59,7 @@ class BVH {
     const int nPrims = primEnd - primStart;
     if (nPrims <= 4) {
       // 葉ノードの作成
-      node->bbox = bbox;
-      node->primIndicesOffset = primStart;
-      node->nPrimitives = nPrims;
-      node->child[0] = nullptr;
-      node->child[1] = nullptr;
-      stats.nLeafNodes++;
-      return node;
+      return createLeafNode(node, bbox, primStart, nPrims);
     }
 
     // 分割用に各Primitiveの中心点を含むAABBを計算
@@ -70,7 +76,7 @@ class BVH {
     // 分割点
     const float splitPos = splitAABB.center()[splitAxis];
 
-    // AABBの分割
+    // AABBの分割(等数分割)
     const int splitIdx = primStart + nPrims / 2;
     std::nth_element(primIndices.begin() + primStart,
                      primIndices.begin() + splitIdx,
@@ -89,14 +95,8 @@ class BVH {
       std::cout << "splitIdx: " << splitIdx << std::endl;
       std::cout << "primEnd: " << primEnd << std::endl;
       std::cout << std::endl;
-
-      node->bbox = bbox;
-      node->primIndicesOffset = primStart;
-      node->nPrimitives = nPrims;
-      node->child[0] = nullptr;
-      node->child[1] = nullptr;
-      stats.nLeafNodes++;
-      return node;
+      // 葉ノードの作成
+      return createLeafNode(node, bbox, primStart, nPrims);
     }
 
     // 中間ノードに情報をセット
