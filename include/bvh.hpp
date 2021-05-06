@@ -15,8 +15,10 @@ class BVH {
   struct BVHNode {
     AABB bbox;              // バウンディングボックス
     int primIndicesOffset;  // primIndicesへのオフセット
-    int nPrimitives;        // ノードに含まれるPrimitiveの数
-    int axis;               // 分割軸(traverseの最適化に使う)
+    union {
+      int nPrimitives;  // ノードに含まれるPrimitiveの数
+      int axis;         // 分割軸(traverseの最適化に使う)
+    };
     BVHNode* child[2];  // 子ノードへのポインタ, 両方nullptrだったら葉ノード
   };
 
@@ -102,7 +104,6 @@ class BVH {
     // 中間ノードに情報をセット
     node->bbox = bbox;
     node->primIndicesOffset = primStart;
-    node->nPrimitives = nPrims;
     node->axis = splitAxis;
 
     // 左の子ノードで同様の計算
