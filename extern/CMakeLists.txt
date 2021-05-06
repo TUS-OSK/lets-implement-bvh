@@ -1,3 +1,3 @@
 # tinyobjloader
 add_library(tinyobjloader INTERFACE)
-target_include_directories(tinyobjloader INTERFACE "tinyobjloader")
+target_include_directories(tinyobjloader SYSTEM INTERFACE "tinyobjloader")
