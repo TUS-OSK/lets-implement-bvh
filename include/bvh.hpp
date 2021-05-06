@@ -13,12 +13,10 @@ class BVH {
 
   // ノードを表す構造体
   struct BVHNode {
-    AABB bbox;              // バウンディングボックス
-    int primIndicesOffset;  // primIndicesへのオフセット
-    union {
-      int nPrimitives;  // ノードに含まれるPrimitiveの数
-      int axis;         // 分割軸(traverseの最適化に使う)
-    };
+    AABB bbox;                   // バウンディングボックス
+    uint32_t primIndicesOffset;  // primIndicesへのオフセット
+    uint16_t nPrimitives;        // ノードに含まれるPrimitiveの数
+    uint8_t axis;                // 分割軸(traverseの最適化に使う)
     BVHNode* child[2];  // 子ノードへのポインタ, 両方nullptrだったら葉ノード
   };
 
