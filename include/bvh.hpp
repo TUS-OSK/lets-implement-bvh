@@ -8,7 +8,6 @@
 class BVH {
  private:
   std::vector<Triangle> primitives;  // Primitive(三角形)の配列
-  std::vector<AABB> bboxes;  // 各Primitiveのバウンディングボックスの配列
   std::vector<int> primIndices;  // primitivesへのインデックスの配列.
                                  // 分割時にはこれがソートされる
 
@@ -33,6 +32,7 @@ class BVH {
 
   // 再帰的にBVHのノードを構築していく
   BVHNode* buildBVHNode(int primStart, int primEnd,
+                        const std::vector<AABB>& bboxes,
                         std::vector<int>& primIndices) {
     // ノードの作成
     BVHNode* node = new BVHNode;
@@ -106,9 +106,9 @@ class BVH {
     node->axis = splitAxis;
 
     // 左の子ノードで同様の計算
-    node->child[0] = buildBVHNode(primStart, splitIdx, primIndices);
+    node->child[0] = buildBVHNode(primStart, splitIdx, bboxes, primIndices);
     // 右の子ノードで同様の計算
-    node->child[1] = buildBVHNode(splitIdx, primEnd, primIndices);
+    node->child[1] = buildBVHNode(splitIdx, primEnd, bboxes, primIndices);
     stats.nInternalNodes++;
 
     return node;
@@ -170,6 +170,7 @@ class BVH {
   // BVHを構築する
   void buildBVH() {
     // 各Primitiveのバウンディングボックスを事前計算
+    std::vector<AABB> bboxes;
     for (const auto& prim : primitives) {
       bboxes.push_back(prim.calcAABB());
     }
@@ -179,7 +180,7 @@ class BVH {
     std::iota(primIndices.begin(), primIndices.end(), 0);
 
     // BVHの構築をルートノードから開始
-    root = buildBVHNode(0, primitives.size(), primIndices);
+    root = buildBVHNode(0, primitives.size(), bboxes, primIndices);
     stats.nNodes = stats.nInternalNodes + stats.nLeafNodes;
   }
 
