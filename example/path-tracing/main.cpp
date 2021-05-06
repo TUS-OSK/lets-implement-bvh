@@ -40,7 +40,7 @@ Vec3 sampleCosineHemisphere(float u, float v, float& pdf) {
               std::sin(phi) * std::sin(theta));
 }
 
-Vec3 pathTracing(const Ray& ray_in, const BVH& scene, RNG& rng) {
+Vec3 pathTracing(const Ray& ray_in, const OptimizedBVH& scene, RNG& rng) {
   constexpr int maxDepth = 100;
   const Vec3 rho{0.9f, 0.9f, 0.9f};
 
@@ -142,7 +142,7 @@ int main() {
   std::cout << "vertices: " << polygon->nVertices << std::endl;
   std::cout << "faces: " << polygon->nFaces() << std::endl;
 
-  BVH bvh(*polygon);
+  OptimizedBVH bvh(*polygon);
   bvh.buildBVH();
   std::cout << "nodes: " << bvh.nNodes() << std::endl;
   std::cout << "internal nodes: " << bvh.nInternalNodes() << std::endl;

@@ -2,7 +2,7 @@
 #define _RAY_H
 #include <limits>
 
-#include "vec3.hpp"
+#include "core/vec3.hpp"
 
 struct Ray {
   Vec3 origin;

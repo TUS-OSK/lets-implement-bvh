@@ -4,7 +4,7 @@
 #include <stack>
 #include <vector>
 
-#include "triangle.hpp"
+#include "core/triangle.hpp"
 
 class OptimizedBVH {
  private:

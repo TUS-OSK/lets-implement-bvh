@@ -3,7 +3,7 @@
 #include <cassert>
 #include <iostream>
 
-#include "vec3.hpp"
+#include "core/vec3.hpp"
 
 struct Polygon {
   unsigned int nVertices;  // 頂点数

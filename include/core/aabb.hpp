@@ -5,8 +5,8 @@
 #include <iostream>
 #include <limits>
 
-#include "ray.hpp"
-#include "vec3.hpp"
+#include "core/ray.hpp"
+#include "core/vec3.hpp"
 
 struct AABB {
   Vec3 bounds[2];
