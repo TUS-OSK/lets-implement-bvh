@@ -123,7 +123,7 @@ int main() {
   const std::string filename = "sponza.obj";
   const int width = 512;
   const int height = 512;
-  const int samples = 100;
+  const int samples = 1;
   const Vec3 camPos(-10, 7, 0);
   const Vec3 camForward(1, 0, 0);
 
