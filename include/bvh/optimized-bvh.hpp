@@ -20,8 +20,9 @@ class OptimizedBVH {
       uint32_t primIndicesOffset;  // primIndicesへのオフセット
       uint32_t secondChildOffset;  // 2番目の子へのオフセット
     };
-    uint16_t nPrimitives;  // ノードに含まれるPrimitiveの数
-    uint8_t axis;          // 分割軸(4で葉ノードを表す)
+    uint16_t nPrimitives{
+        0};  // ノードに含まれるPrimitiveの数(中間ノードの場合は0)
+    uint8_t axis{0};  // 分割軸
   };
 
   // BVHの統計情報を表す構造体
@@ -40,7 +41,6 @@ class OptimizedBVH {
     node.bbox = bbox;
     node.primIndicesOffset = primStart;
     node.nPrimitives = nPrims;
-    node.axis = 4;
     nodes.push_back(node);
     stats.nLeafNodes++;
   }
@@ -116,6 +116,8 @@ class OptimizedBVH {
   }
 
   // 再帰的にBVHのtraverseを行う
+  // NOTE:
+  // 再帰なし版も実装してみたがこっちの方が早かった(simple-renderingで0.2秒差)
   bool intersectNode(int nodeIdx, const Ray& ray, const Vec3& dirInv,
                      const int dirInvSign[3], IntersectInfo& info) const {
     bool hit = false;
@@ -124,7 +126,7 @@ class OptimizedBVH {
     // AABBとの交差判定
     if (node.bbox.intersect(ray, dirInv, dirInvSign)) {
       // 葉ノードの場合
-      if (node.axis == 4) {
+      if (node.nPrimitives > 0) {
         // ノードに含まれる全てのPrimitiveと交差計算
         const int primEnd = node.primIndicesOffset + node.nPrimitives;
         for (int i = node.primIndicesOffset; i < primEnd; ++i) {
