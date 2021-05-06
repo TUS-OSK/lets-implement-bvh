@@ -181,6 +181,8 @@ class BVH {
 
     // BVHの構築をルートノードから開始
     root = buildBVHNode(0, primitives.size(), bboxes, primIndices);
+
+    // 総ノード数を計算
     stats.nNodes = stats.nInternalNodes + stats.nLeafNodes;
   }
 
@@ -190,8 +192,15 @@ class BVH {
   int nInternalNodes() const { return stats.nInternalNodes; }
   // 葉ノード数を返す
   int nLeafNodes() const { return stats.nLeafNodes; }
+
   // 全体のバウンディングボックスを返す
-  AABB rootAABB() const { return root->bbox; }
+  AABB rootAABB() const {
+    if (root) {
+      return root->bbox;
+    } else {
+      return AABB();
+    }
+  }
 
   // traverseをする
   bool intersect(const Ray& ray, IntersectInfo& info) const {
