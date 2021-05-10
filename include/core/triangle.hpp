@@ -7,7 +7,7 @@
 class Triangle {
  private:
   const Polygon* polygon;
-  const unsigned int faceID;
+  unsigned int faceID;
 
  public:
   Triangle(const Polygon* polygon, unsigned int faceID)

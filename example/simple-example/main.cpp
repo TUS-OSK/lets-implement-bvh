@@ -1,4 +1,5 @@
 #define TINYOBJLOADER_IMPLEMENTATION
+#include <chrono>
 #include <memory>
 #include <string>
 
@@ -69,6 +70,7 @@ int main() {
 
   Ray ray(Vec3(0, 0, -10), Vec3(0, 0, 1));
   IntersectInfo info;
+  const auto startTime = std::chrono::system_clock::now();
   if (bvh.intersect(ray, info)) {
     std::cout << "t: " << info.t << std::endl;
     std::cout << "hitPos: " << info.hitPos << std::endl;
@@ -77,6 +79,10 @@ int main() {
     std::cout << "barycentric: " << info.barycentric[0] << ", "
               << info.barycentric[1] << std::endl;
   }
+  std::cout << std::chrono::duration_cast<std::chrono::microseconds>(
+                   std::chrono::system_clock::now() - startTime)
+                   .count()
+            << "μs" << std::endl;
 
   return 0;
 }

@@ -1,6 +1,7 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <omp.h>
 
+#include <chrono>
 #include <memory>
 #include <string>
 
@@ -152,6 +153,7 @@ int main() {
   Image img(width, height);
   Camera camera(camPos, camForward);
 
+  const auto startTime = std::chrono::system_clock::now();
 #pragma omp parallel for schedule(dynamic, 1)
   for (int j = 0; j < height; ++j) {
     for (int i = 0; i < width; ++i) {
@@ -169,6 +171,11 @@ int main() {
       img.setPixel(i, j, color);
     }
   }
+  std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(
+                   std::chrono::system_clock::now() - startTime)
+                   .count()
+            << "ms" << std::endl;
+
   img.writePPM("output.ppm");
 
   return 0;
