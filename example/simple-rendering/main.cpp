@@ -1,4 +1,5 @@
 #define TINYOBJLOADER_IMPLEMENTATION
+#include <chrono>
 #include <memory>
 #include <string>
 
@@ -74,6 +75,8 @@ int main() {
 
   Image img(width, height);
   Camera camera(camPos, camForward);
+
+  const auto startTime = std::chrono::system_clock::now();
   for (int j = 0; j < height; ++j) {
     for (int i = 0; i < width; ++i) {
       const float u = (2.0f * i - width) / height;
@@ -88,6 +91,11 @@ int main() {
       }
     }
   }
+  std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(
+                   std::chrono::system_clock::now() - startTime)
+                   .count()
+            << "ms" << std::endl;
+
   img.writePPM("output.ppm");
 
   return 0;
