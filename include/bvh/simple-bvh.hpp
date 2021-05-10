@@ -8,8 +8,6 @@
 class SimpleBVH {
  private:
   std::vector<Triangle> primitives;  // Primitive(三角形)の配列
-  std::vector<int> primIndices;  // primitivesへのインデックスの配列.
-                                 // 分割時にはこれがソートされる
 
   // ノードを表す構造体
   struct BVHNode {
@@ -43,17 +41,14 @@ class SimpleBVH {
   }
 
   // 再帰的にBVHのノードを構築していく
-  BVHNode* buildBVHNode(int primStart, int primEnd,
-                        const std::vector<AABB>& bboxes,
-                        std::vector<int>& primIndices) {
+  BVHNode* buildBVHNode(int primStart, int primEnd) {
     // ノードの作成
     BVHNode* node = new BVHNode;
 
     // AABBの計算
     AABB bbox;
     for (int i = primStart; i < primEnd; ++i) {
-      const int primIdx = primIndices[i];
-      bbox = mergeAABB(bbox, bboxes[primIdx]);
+      bbox = mergeAABB(bbox, primitives[i].calcAABB());
     }
 
     const int nPrims = primEnd - primStart;
@@ -66,8 +61,7 @@ class SimpleBVH {
     // NOTE: bboxをそのまま使ってしまうとsplitが失敗することが多い
     AABB splitAABB;
     for (int i = primStart; i < primEnd; ++i) {
-      const int primIdx = primIndices[i];
-      splitAABB = mergeAABB(splitAABB, bboxes[primIdx].center());
+      splitAABB = mergeAABB(splitAABB, primitives[i].calcAABB().center());
     }
 
     // 分割軸
@@ -78,11 +72,12 @@ class SimpleBVH {
 
     // AABBの分割(等数分割)
     const int splitIdx = primStart + nPrims / 2;
-    std::nth_element(primIndices.begin() + primStart,
-                     primIndices.begin() + splitIdx,
-                     primIndices.begin() + primEnd, [&](int idx1, int idx2) {
-                       return bboxes[idx1].center()[splitAxis] <
-                              bboxes[idx2].center()[splitAxis];
+    std::nth_element(primitives.begin() + primStart,
+                     primitives.begin() + splitIdx,
+                     primitives.begin() + primEnd,
+                     [&](const auto& prim1, const auto& prim2) {
+                       return prim1.calcAABB().center()[splitAxis] <
+                              prim2.calcAABB().center()[splitAxis];
                      });
 
     // 分割が失敗した場合は葉ノードを作成
@@ -105,9 +100,9 @@ class SimpleBVH {
     node->axis = splitAxis;
 
     // 左の子ノードで同様の計算
-    node->child[0] = buildBVHNode(primStart, splitIdx, bboxes, primIndices);
+    node->child[0] = buildBVHNode(primStart, splitIdx);
     // 右の子ノードで同様の計算
-    node->child[1] = buildBVHNode(splitIdx, primEnd, bboxes, primIndices);
+    node->child[1] = buildBVHNode(splitIdx, primEnd);
     stats.nInternalNodes++;
 
     return node;
@@ -132,8 +127,7 @@ class SimpleBVH {
         // ノードに含まれる全てのPrimitiveと交差計算
         const int primEnd = node->primIndicesOffset + node->nPrimitives;
         for (int i = node->primIndicesOffset; i < primEnd; ++i) {
-          const int primIdx = primIndices[i];
-          if (primitives[primIdx].intersect(ray, info)) {
+          if (primitives[i].intersect(ray, info)) {
             // intersectしたらrayのtmaxを更新
             hit = true;
             ray.tmax = info.t;
@@ -168,18 +162,8 @@ class SimpleBVH {
 
   // BVHを構築する
   void buildBVH() {
-    // 各Primitiveのバウンディングボックスを事前計算
-    std::vector<AABB> bboxes;
-    for (const auto& prim : primitives) {
-      bboxes.push_back(prim.calcAABB());
-    }
-
-    // 各Primitiveへのインデックスを表す配列を作成
-    primIndices.resize(primitives.size());
-    std::iota(primIndices.begin(), primIndices.end(), 0);
-
     // BVHの構築をルートノードから開始
-    root = buildBVHNode(0, primitives.size(), bboxes, primIndices);
+    root = buildBVHNode(0, primitives.size());
 
     // 総ノード数を計算
     stats.nNodes = stats.nInternalNodes + stats.nLeafNodes;

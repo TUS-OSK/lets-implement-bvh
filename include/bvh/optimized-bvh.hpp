@@ -9,8 +9,6 @@
 class OptimizedBVH {
  private:
   std::vector<Triangle> primitives;  // Primitive(三角形)の配列
-  std::vector<int> primIndices;  // primitivesへのインデックスの配列.
-                                 // 分割時にはこれがソートされる
 
   // ノードを表す構造体
   // NOTE: 32ByteにAlignmentすることでキャッシュ効率を良くする
@@ -46,13 +44,11 @@ class OptimizedBVH {
   }
 
   // 再帰的にBVHのノードを構築していく
-  void buildBVHNode(int primStart, int primEnd, const std::vector<AABB>& bboxes,
-                    std::vector<int>& primIndices) {
+  void buildBVHNode(int primStart, int primEnd) {
     // AABBの計算
     AABB bbox;
     for (int i = primStart; i < primEnd; ++i) {
-      const int primIdx = primIndices[i];
-      bbox = mergeAABB(bbox, bboxes[primIdx]);
+      bbox = mergeAABB(bbox, primitives[i].calcAABB());
     }
 
     // 含まれるPrimitiveが少ない場合は葉ノードにする
@@ -66,8 +62,7 @@ class OptimizedBVH {
     // NOTE: bboxをそのまま使ってしまうとsplitが失敗することが多い
     AABB splitAABB;
     for (int i = primStart; i < primEnd; ++i) {
-      const int primIdx = primIndices[i];
-      splitAABB = mergeAABB(splitAABB, bboxes[primIdx].center());
+      splitAABB = mergeAABB(splitAABB, primitives[i].calcAABB().center());
     }
 
     // 分割軸
@@ -75,11 +70,12 @@ class OptimizedBVH {
 
     // AABBの分割(等数分割)
     const int splitIdx = primStart + nPrims / 2;
-    std::nth_element(primIndices.begin() + primStart,
-                     primIndices.begin() + splitIdx,
-                     primIndices.begin() + primEnd, [&](int idx1, int idx2) {
-                       return bboxes[idx1].center()[splitAxis] <
-                              bboxes[idx2].center()[splitAxis];
+    std::nth_element(primitives.begin() + primStart,
+                     primitives.begin() + splitIdx,
+                     primitives.begin() + primEnd,
+                     [&](const auto& prim1, const auto& prim2) {
+                       return prim1.calcAABB().center()[splitAxis] <
+                              prim2.calcAABB().center()[splitAxis];
                      });
 
     // 分割が失敗した場合は葉ノードを作成
@@ -105,14 +101,14 @@ class OptimizedBVH {
     stats.nInternalNodes++;
 
     // 左の子ノードを配列に追加していく
-    buildBVHNode(primStart, splitIdx, bboxes, primIndices);
+    buildBVHNode(primStart, splitIdx);
 
     // 右の子へのオフセットを計算し, 親ノードにセットする
     const int secondChildOffset = nodes.size();
     nodes[parentOffset].secondChildOffset = secondChildOffset;
 
     // 右の子ノードを配列に追加していく
-    buildBVHNode(splitIdx, primEnd, bboxes, primIndices);
+    buildBVHNode(splitIdx, primEnd);
   }
 
   // 再帰的にBVHのtraverseを行う
@@ -130,8 +126,7 @@ class OptimizedBVH {
         // ノードに含まれる全てのPrimitiveと交差計算
         const int primEnd = node.primIndicesOffset + node.nPrimitives;
         for (int i = node.primIndicesOffset; i < primEnd; ++i) {
-          const int primIdx = primIndices[i];
-          if (primitives[primIdx].intersect(ray, info)) {
+          if (primitives[i].intersect(ray, info)) {
             // intersectしたらrayのtmaxを更新
             hit = true;
             ray.tmax = info.t;
@@ -173,12 +168,8 @@ class OptimizedBVH {
       bboxes.push_back(prim.calcAABB());
     }
 
-    // 各Primitiveへのインデックスを表す配列を作成
-    primIndices.resize(primitives.size());
-    std::iota(primIndices.begin(), primIndices.end(), 0);
-
     // BVHの構築をルートノードから開始
-    buildBVHNode(0, primitives.size(), bboxes, primIndices);
+    buildBVHNode(0, primitives.size());
 
     // 総ノード数を計算
     stats.nNodes = stats.nInternalNodes + stats.nLeafNodes;
