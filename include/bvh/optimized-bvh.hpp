@@ -162,12 +162,6 @@ class OptimizedBVH {
 
   // BVHを構築する
   void buildBVH() {
-    // 各Primitiveのバウンディングボックスを事前計算
-    std::vector<AABB> bboxes;
-    for (const auto& prim : primitives) {
-      bboxes.push_back(prim.calcAABB());
-    }
-
     // BVHの構築をルートノードから開始
     buildBVHNode(0, primitives.size());
 
