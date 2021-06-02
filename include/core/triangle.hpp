@@ -68,7 +68,7 @@ class Triangle {
       const Vec3 n1 = polygon->getNormal(indices[0]);
       const Vec3 n2 = polygon->getNormal(indices[1]);
       const Vec3 n3 = polygon->getNormal(indices[2]);
-      info.hitPos = w * n1 + u * n2 + v * n3;
+      info.hitNormal = w * n1 + u * n2 + v * n3;
     } else {
       // 面法線を計算
       info.hitNormal = normalize(cross(e1, e2));
